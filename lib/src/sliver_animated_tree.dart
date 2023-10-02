@@ -20,20 +20,20 @@ import 'tree_controller.dart';
 /// Signature for a function that takes a widget and an animation to apply
 /// transitions if needed.
 typedef TreeTransitionBuilder = Widget Function(
-  BuildContext context,
-  Widget child,
-  Animation<double> animation,
-);
+    BuildContext context,
+    Widget child,
+    Animation<double> animation,
+    );
 
 /// The default transition builder used by [SliverTree] to animate the expansion
 /// state changes of a tree node.
 ///
 /// Wraps [child] in a [SizeTransition].
 Widget defaultTreeTransitionBuilder(
-  BuildContext context,
-  Widget child,
-  Animation<double> animation,
-) {
+    BuildContext context,
+    Widget child,
+    Animation<double> animation,
+    ) {
   return SizeTransition(sizeFactor: animation, child: child);
 }
 
@@ -232,26 +232,30 @@ class _SliverAnimatedTreeState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        childCount: _flatTree.length,
-        (BuildContext context, int index) {
-          final TreeEntry<T> entry = _flatTree[index];
-          return _TreeEntry<T>(
-            key: _SaltedTreeNodeKey(entry.node),
-            entry: entry,
-            nodeBuilder: widget.nodeBuilder,
-            buildFlatSubtree: _buildSubtree,
-            transitionBuilder: widget.transitionBuilder,
-            onAnimationComplete: _onAnimationComplete,
-            curve: widget.curve,
-            duration: widget.duration,
-            showSubtree: _animatingNodes.contains(entry.node),
-          );
-        },
+    return TreeViewScope<T>(
+      controller: widget.controller,
+      child: SliverList(
+        delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+            final TreeEntry<T> entry = _flatTree[index];
+            return _TreeEntry<T>(
+              key: _SaltedTreeNodeKey(entry.node),
+              entry: entry,
+              nodeBuilder: widget.nodeBuilder,
+              buildFlatSubtree: _buildSubtree,
+              transitionBuilder: widget.transitionBuilder,
+              onAnimationComplete: _onAnimationComplete,
+              curve: widget.curve,
+              duration: widget.duration,
+              showSubtree: _animatingNodes.contains(entry.node),
+            );
+          },
+          childCount: _flatTree.length, // Specify the number of items in your list
+        ),
       ),
     );
   }
+
 }
 
 class _SaltedTreeNodeKey extends GlobalObjectKey {
@@ -259,8 +263,8 @@ class _SaltedTreeNodeKey extends GlobalObjectKey {
 }
 
 typedef _FlatSubtreeBuilder<T extends Object> = List<TreeEntry<T>> Function(
-  TreeEntry<T> virtualRoot,
-);
+    TreeEntry<T> virtualRoot,
+    );
 
 class _TreeEntry<T extends Object> extends StatefulWidget {
   const _TreeEntry({
