@@ -20,20 +20,20 @@ import 'tree_controller.dart';
 /// Signature for a function that takes a widget and an animation to apply
 /// transitions if needed.
 typedef TreeTransitionBuilder = Widget Function(
-  BuildContext context,
-  Widget child,
-  Animation<double> animation,
-);
+    BuildContext context,
+    Widget child,
+    Animation<double> animation,
+    );
 
 /// The default transition builder used by [SliverTree] to animate the expansion
 /// state changes of a tree node.
 ///
 /// Wraps [child] in a [SizeTransition].
 Widget defaultTreeTransitionBuilder(
-  BuildContext context,
-  Widget child,
-  Animation<double> animation,
-) {
+    BuildContext context,
+    Widget child,
+    Animation<double> animation,
+    ) {
   return SizeTransition(sizeFactor: animation, child: child);
 }
 
@@ -236,7 +236,7 @@ class _SliverAnimatedTreeState<T extends Object>
       controller: widget.controller,
       child: SliverList(
         delegate: SliverChildBuilderDelegate(
-          (BuildContext context, int index) {
+              (BuildContext context, int index) {
             final TreeEntry<T> entry = _flatTree[index];
             return _TreeEntry<T>(
               key: _SaltedTreeNodeKey(entry.node),
@@ -250,12 +250,12 @@ class _SliverAnimatedTreeState<T extends Object>
               showSubtree: _animatingNodes.contains(entry.node),
             );
           },
-          childCount:
-              _flatTree.length, // Specify the number of items in your list
+          childCount: _flatTree.length, // Specify the number of items in your list
         ),
       ),
     );
   }
+
 }
 
 class _SaltedTreeNodeKey extends GlobalObjectKey {
@@ -263,8 +263,8 @@ class _SaltedTreeNodeKey extends GlobalObjectKey {
 }
 
 typedef _FlatSubtreeBuilder<T extends Object> = List<TreeEntry<T>> Function(
-  TreeEntry<T> virtualRoot,
-);
+    TreeEntry<T> virtualRoot,
+    );
 
 class _TreeEntry<T extends Object> extends StatefulWidget {
   const _TreeEntry({
@@ -296,7 +296,6 @@ class _TreeEntry<T extends Object> extends StatefulWidget {
 class _TreeEntryState<T extends Object> extends State<_TreeEntry<T>>
     with SingleTickerProviderStateMixin {
   TreeEntry<T> get entry => widget.entry;
-
   T get node => entry.node;
 
   late final AnimationController animationController;
@@ -379,7 +378,7 @@ class _TreeEntryState<T extends Object> extends State<_TreeEntry<T>>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Transform.scale(scale: 0.5,alignment: Alignment.topLeft, child: tile),
+        tile,
         if (widget.showSubtree && animationController.isAnimating)
           widget.transitionBuilder(
             context,
